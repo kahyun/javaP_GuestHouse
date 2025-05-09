@@ -1,0 +1,81 @@
+package com.gh.test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.gh.child.Guest;
+import com.gh.exception.NoRoomException;
+import com.gh.rsv.Reservation;
+import com.gh.rsv.Room;
+import com.gh.service.impl.GahaServiceImpl;
+import com.gh.util.Date;
+
+public class GehaServiceTest {
+
+	public static void main(String[] args) {
+		HashMap<String, Room> roomMap = new HashMap<String, Room>();
+		// 남성 전용
+		roomMap.put("M11", new Room("M11", 1, 'M', 60000, 0));
+		roomMap.put("M12", new Room("M12", 1, 'M', 60000, 0));
+		roomMap.put("M13", new Room("M13", 1, 'M', 60000, 0));
+		roomMap.put("M21", new Room("M21", 2, 'M', 40000, 0));
+		roomMap.put("M22", new Room("M22", 2, 'M', 40000, 0));
+		roomMap.put("M23", new Room("M23", 2, 'M', 40000, 0));
+		roomMap.put("M41", new Room("M41", 4, 'M', 25000, 0));
+		roomMap.put("M42", new Room("M42", 4, 'M', 25000, 0));
+		roomMap.put("M43", new Room("M43", 4, 'M', 25000, 0));
+		roomMap.put("M44", new Room("M44", 4, 'M', 25000, 0));
+		// 여성 전용
+		roomMap.put("F11", new Room("F11", 1, 'F', 60000, 0));
+		roomMap.put("F12", new Room("F12", 1, 'F', 60000, 0));
+		roomMap.put("F13", new Room("F13", 1, 'F', 60000, 0));
+		roomMap.put("F21", new Room("F21", 2, 'F', 40000, 0));
+		roomMap.put("F22", new Room("F22", 2, 'F', 40000, 0));
+		roomMap.put("F23", new Room("F23", 2, 'F', 40000, 0));
+		roomMap.put("F41", new Room("F41", 4, 'F', 25000, 0));
+		roomMap.put("F42", new Room("F42", 4, 'F', 25000, 0));
+		roomMap.put("F43", new Room("F43", 4, 'F', 25000, 0));
+		roomMap.put("F44", new Room("F44", 4, 'F', 25000, 0));
+	
+		Guest g1 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g2 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g3 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g4 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
+		
+		GahaServiceImpl service = GahaServiceImpl.getInstance();
+		service.setRoomMap(roomMap);
+		
+		try {
+			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, 0, true);
+			System.out.println(g1.getName()+"님의 예약입니다 =>"+r1);
+		} catch (NoRoomException e) {
+			e.printStackTrace();
+		}
+		try {
+			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, 0, true);
+			System.out.println(g1.getName()+"님의 예약입니다 =>"+r2);
+		} catch (NoRoomException e) {
+			e.printStackTrace();
+		}
+		try {
+			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, 0, true);
+			System.out.println(g1.getName()+"님의 예약입니다 =>"+r3);
+		} catch (NoRoomException e) {
+			e.printStackTrace();
+		}
+		try {
+			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, 0, true);
+			System.out.println(g1.getName()+"님의 예약입니다 =>"+r4);
+		} catch (NoRoomException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("=====전체 방 목록=====");
+		for(Room r : roomMap.values())
+			System.out.println(r);
+		
+		System.out.println("=====예약 가능한 F 방 목록=====");
+		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+	}
+
+}
