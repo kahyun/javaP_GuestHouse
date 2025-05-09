@@ -95,6 +95,9 @@ public class GehaServiceTest {
 		
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+	
+		System.out.println("===== 파티 구성 테스트 =====");
+		service.makeParty(new Date(2025, 5, 8));
 		
 		try {
 		    Room changedRoom = roomMap.get("F21"); // 2인실 방 하나 선택
@@ -110,12 +113,12 @@ public class GehaServiceTest {
 		} catch (Exception e) {
 			
 		    e.printStackTrace();
-		    
-	
+
 		System.out.println("=====Date(2025,5,8) 에 조식 신청한 Guest 목록=====");
 		ArrayList<Guest> bf250508 = service.searchBreakfastGuest(new Date(2025,5,8));
 		for(Guest g : bf250508)
 			System.out.println(g);
+
 	}
 		
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
