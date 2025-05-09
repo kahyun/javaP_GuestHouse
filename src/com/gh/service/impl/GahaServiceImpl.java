@@ -22,7 +22,7 @@ public  class GahaServiceImpl implements GehaService {
 	private HashMap<Integer, Reservation> rsvMap; // 예약번호를 Key, 예약 객체를 Value로 담은 HashMap
 	private HashMap<String, Room> roomMap; // (중복 없는) 방 정보를 Key, 방 객체를 Value로 담은 HashMap
 	private HashMap<Integer, Integer> partyMap = new HashMap<>(); // 예약 번호를 Key, 파티 참가비를 Value로 담은 HashMap
-	private HashMap<Date, Integer> breakfastMap = new HashMap<>(); // 날짜 정보를 Key, 조식 신청 인원 수를 Value로 담은 HashMap
+	private HashMap<Integer, Date> breakfastMap = new HashMap<>(); // 예약 번호를 Key, 날짜 정보를 Value로 담은 HashMap
 	public static final int NUMBER_OF_ROOM = 20; // 게스트하우스 전체 방 개수
 	private int rsvNum = 1; // 예약 번호
 	
@@ -81,10 +81,8 @@ public  class GahaServiceImpl implements GehaService {
 			throw new NoRoomException("예약 가능한 방이 없습니다.");
 		// attendFee 랑 eatBreakfast 인자값 받은 거 Party Map과 Breakfast Map에 넣기
 		partyMap.put(rsvNum, attendFee);
-		if(breakfastMap.containsKey(rsvDate))
-			breakfastMap.put(rsvDate, breakfastMap.get(rsvDate)+1);
-		else
-			breakfastMap.put(rsvDate, 1);
+		if(eatBreakfast == true)
+			breakfastMap.put(rsvNum, rsvDate);
 		rsvNum++;
 		return tempRsv;
 	}
@@ -106,6 +104,8 @@ public  class GahaServiceImpl implements GehaService {
 			Room findRoom = rsvMap.get(rsvNum).getRsvRoom();
 			findRoom.setBooked(findRoom.getBooked()-1);
 			rsvMap.remove(rsvNum); // 예약 Map에서 해당 예약 삭제
+			if(breakfastMap.containsKey(rsvNum))
+				breakfastMap.remove(rsvNum);
 			System.out.println("예약번호 "+rsvNum+"에 해당하는 예약 내역을 삭제하였습니다.");
 		} else
 			System.out.println("예약번호 "+rsvNum+"에 해당하는 예약 내역이 존재하지 않습니다.");
@@ -130,10 +130,18 @@ public  class GahaServiceImpl implements GehaService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	@Override
-	public Guest[] searchBreakfastGuest(Date resvDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Guest> searchBreakfastGuest(Date rsvDate) { // Guest[] -> ArrayList<Guest> 로 수정
+		ArrayList<Guest> mealList = new ArrayList<>();
+		for(int i : breakfastMap.keySet()) { // 조식 목록을 돌면서
+			Date tempDate = breakfastMap.get(i); // 조식 목록의 날짜를 임시로 담을 Date 변수
+			// 연도 월 일이 같다면
+			if(tempDate.getYear() == rsvDate.getYear() && tempDate.getMonth() == rsvDate.getMonth() && tempDate.getDay() == rsvDate.getDay()) {
+				mealList.add(rsvMap.get(i).getRsvGuest()); // 게스트 목록에 추가
+			}
+		}
+		return mealList;
 	}
 	
 	@Override
@@ -154,7 +162,10 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	@Override
 	public int makeBreakfast(Date rsvDate) {
-		// TODO Auto-generated method stub
+		ArrayList<Guest> mealList = searchBreakfastGuest(rsvDate);
+		int mealNum = mealList.size();
+		// 그리디 알고리즘
+		
 		return 0;
 	}
 }
