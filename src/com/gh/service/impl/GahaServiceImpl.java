@@ -163,8 +163,8 @@ public  class GahaServiceImpl implements GehaService {
 	@Override
 	public String searchRsvCondition(Date rsvDate) {
 //		String s = null; -> 스트링을 했는데  안정적이지 않다.
-		List<Room> ly = new ArrayList<>(roomMap.k()); //방 번호만 정렬
-		ly.sort(Comparator.comparing(Room::getRoomNum)); // sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
+//		List<Room> ly = new ArrayList<>(roomMap.k()); //방 번호만 정렬
+//		ly.sort(Comparator.comparing(Room::getRoomNum)); // sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
 		
 		StringBuilder sb = new StringBuilder();
 		for(Room r : roomMap.values()) {
