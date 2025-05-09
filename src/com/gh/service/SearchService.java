@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
+import com.gh.exception.NoBreakfastException;
 import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
 import com.gh.rsv.Room;
@@ -36,14 +37,14 @@ public interface SearchService {
 	 * @param resvDate
 	 * @return 특정 일자의 조식 신청 Guest 배열
 	 */
-	ArrayList<Guest> searchBreakfastGuest(Date resvDate);
+	ArrayList<Guest> searchBreakfastGuest(Date resvDate) throws NoBreakfastException;
 	
 	/**
 	 * 특정 일자를 기준으로 전체 예약 목록을 조회하는 기능
 	 * @param rsvDate
 	 * @return 특정 일자의 Reservation 배열
 	 */
-	Reservation[] searchAllRsv(Date rsvDate);
+	ArrayList<Reservation> searchAllRsv(Date rsvDate);
 
 	/**
 	 * 특정 일자를 기준으로 방 별 예약 현황을 조회하는 기능

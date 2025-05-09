@@ -17,24 +17,24 @@ import com.gh.child.Owner;
  */
 public class FoodShop {
 
-	private ArrayList<HashMap<Integer, Integer>> list;
+	private HashMap<Integer, Integer> foodMap;
 	private Owner owner;
 
 	public FoodShop() {
 	}
-
-	public FoodShop(ArrayList<HashMap<Integer, Integer>> list, Owner owner) {
+	
+	public FoodShop(HashMap<Integer, Integer> foodMap, Owner owner) {
 		super();
-		this.list = list;
+		this.foodMap = foodMap;
 		this.owner = owner;
 	}
-
-	public ArrayList<HashMap<Integer, Integer>> getList() {
-		return list;
+	
+	public HashMap<Integer, Integer> getFoodMap() {
+		return foodMap;
 	}
 
-	public void setList(ArrayList<HashMap<Integer, Integer>> list) {
-		this.list = list;
+	public void setFoodMap(HashMap<Integer, Integer> foodMap) {
+		this.foodMap = foodMap;
 	}
 
 	public Owner getOwner() {
@@ -47,7 +47,6 @@ public class FoodShop {
 
 	@Override
 	public String toString() {
-		return "FoodShop list=" + list + "";
+		return "FoodShop [foodMap=" + foodMap + ", owner=" + owner + "]";
 	}
-
 }

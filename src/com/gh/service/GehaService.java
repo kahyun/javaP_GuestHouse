@@ -1,5 +1,6 @@
 package com.gh.service;
 
+import com.gh.exception.NoBreakfastException;
 import com.gh.util.Date;
 
 public interface GehaService extends SearchService,DMLService {
@@ -24,6 +25,7 @@ public interface GehaService extends SearchService,DMLService {
 	 * 3) 15개 거래시 개당 3000원
 	 * @param rsvDate
 	 * @return 조식 인당 가격 반환
+	 * @throws NoBreakfastException 
 	 */
-	int makeBreakfast(Date rsvDate);
+	int makeBreakfast(Date rsvDate) throws NoBreakfastException;
 }
