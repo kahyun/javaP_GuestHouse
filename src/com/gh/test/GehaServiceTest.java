@@ -95,6 +95,28 @@ public class GehaServiceTest {
 		
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+		
+		try {
+		    Room changedRoom = roomMap.get("F21"); // 2인실 방 하나 선택
+		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, 0, false); // 예약번호 1번 수정
+		    service.updateRsv(1, newRsv); // 번호 1번 예약자 g1의 방을 변경
+
+		    System.out.println("업데이트 후 예약 정보:");
+		    System.out.println(newRsv);
+
+		    System.out.println("업데이트 후 방 상태:");
+		    System.out.println("기존방(F11): " + roomMap.get("F11"));
+		    System.out.println("신규방(F21): " + roomMap.get("F21"));
+		} catch (Exception e) {
+			
+		    e.printStackTrace();
+		    
 	}
+		
+		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
+		
+	}
+	
+	
 
 }
