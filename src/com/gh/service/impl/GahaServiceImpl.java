@@ -91,13 +91,37 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public void updateRsv(int rsvNum, Reservation rsv) { // U
+		// 기존 예약 정보 확인
+				Reservation oldRsv = rsvMap.get(rsvNum);
+
+				if (oldRsv == null)
+					return;// 예약이 없으면 무시
+
+				Room oldRoom = oldRsv.getRsvRoom();
+				Room newRoom = rsv.getRsvRoom();
+
+				// 방이 바뀌었을때
+				if (!oldRoom.getRoomNum().equals(newRoom.getRoomNum())) {
+					//기존 방 인원 -1
+					Room updated01Room = new Room(oldRoom.getRoomNum(), oldRoom.getRoomType(), oldRoom.getGender(),
+							oldRoom.getPrice(), oldRoom.getBooked() - 1);
+
+					roomMap.put(updated01Room.getRoomNum(), updated01Room);
+					//새방 인원 +1
+					Room updatedRoom = new Room(newRoom.getRoomNum(), newRoom.getRoomType(), newRoom.getGender(),
+							newRoom.getPrice(), newRoom.getBooked() + 1);
+					roomMap.put(updatedRoom.getRoomNum(), updatedRoom);
+				}
+				
+				//rsvMap 갱신
+				rsvMap.put(rsvNum, rsv);
+	
 				
 				// 방 정보가 바꼈는지 먼저 확인하고 방 정보가 바꼈을 때만 roomMap 을 건드린다
 				// roomMap 해시맵 정보도 수정해야 함
 				// (방 예약인원 수정 / 원래 예약했던 방 인원 -1 새롭게 예약한 방 인원 +1)
-				
+
 				// rsvs 배열도 수정해야하고 (예약 수정)
-		
 	}
 	
 	@Override
@@ -138,8 +162,19 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public String searchRsvCondition(Date rsvDate) {
-		// TODO Auto-generated method stub
-		return null;
+//		String s = null; -> 스트링을 했는데  안정적이지 않다.
+		List<Room> ly = new ArrayList<>(roomMap.k()); //방 번호만 정렬
+		ly.sort(Comparator.comparing(Room::getRoomNum)); // sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
+		
+		StringBuilder sb = new StringBuilder();
+		for(Room r : roomMap.values()) {
+			String room = r.getRoomNum();
+			int booked = r.getBooked();
+			int max = r.getRoomType();
+			 sb.append(room).append(" ").append(booked).append("/").append(max).append("\n");
+		}
+		
+		return sb.toString();
 	}
 	@Override
 	public int searchAvgBreakfastPrice(int year, int month) {
