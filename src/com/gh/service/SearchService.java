@@ -36,7 +36,7 @@ public interface SearchService {
 	 * @param resvDate
 	 * @return 특정 일자의 조식 신청 Guest 배열
 	 */
-	Guest[] searchBreakfastGuest(Date resvDate);
+	ArrayList<Guest> searchBreakfastGuest(Date resvDate);
 	
 	/**
 	 * 특정 일자를 기준으로 전체 예약 목록을 조회하는 기능
