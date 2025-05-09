@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
+import com.gh.exception.NoBreakfastException;
 import com.gh.exception.NoRoomException;
+import com.gh.rsv.FoodShop;
 import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
 import com.gh.rsv.Room;
@@ -149,10 +151,14 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	
 	@Override
-	public Reservation[] searchAllRsv(Date rsvDate) { // 전체 r
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Reservation> searchAllRsv(Date rsvDate) { // 전체 R
+		ArrayList<Reservation> temp = new ArrayList<>();
+		for(Reservation r : rsvMap.values()) {
+			temp.add(r);
+		}
+		return temp;
 	}
+	
 	@Override
 	public Party searchParty(int rsvNum) {
 		// TODO Auto-generated method stub
@@ -165,7 +171,7 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	
 	@Override
-	public ArrayList<Guest> searchBreakfastGuest(Date rsvDate) { // Guest[] -> ArrayList<Guest> 로 수정
+	public ArrayList<Guest> searchBreakfastGuest(Date rsvDate) throws NoBreakfastException { // Guest[] -> ArrayList<Guest> 로 수정
 		ArrayList<Guest> mealList = new ArrayList<>();
 		for(int i : breakfastMap.keySet()) { // 조식 목록을 돌면서
 			Date tempDate = breakfastMap.get(i); // 조식 목록의 날짜를 임시로 담을 Date 변수
@@ -174,6 +180,8 @@ public  class GahaServiceImpl implements GehaService {
 				mealList.add(rsvMap.get(i).getRsvGuest()); // 게스트 목록에 추가
 			}
 		}
+		if(mealList.size() == 0)
+			throw new NoBreakfastException("해당일에 조식을 신청한 인원이 없습니다.");
 		return mealList;
 	}
 	
@@ -193,11 +201,6 @@ public  class GahaServiceImpl implements GehaService {
 		}
 		
 		return sb.toString();
-	}
-	@Override
-	public int searchAvgBreakfastPrice(int year, int month) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 	
 	@Override
@@ -281,11 +284,34 @@ public  class GahaServiceImpl implements GehaService {
 	}
 		
 	@Override
-	public int makeBreakfast(Date rsvDate) {
+	public int makeBreakfast(Date rsvDate) throws NoBreakfastException {
+		FoodShop fs = new FoodShop();
+		HashMap<Integer, Integer> food = new HashMap<>();
+		food.put(15, 3000);
+		food.put(10, 3300);
+		food.put(1, 4000);
+		fs.setFoodMap(food);
+		
 		ArrayList<Guest> mealList = searchBreakfastGuest(rsvDate);
 		int mealNum = mealList.size();
+		int temp = mealNum;
+		int total = 0;
+		System.out.println("조식 신청 인원은 "+mealNum+"명 입니다.");
 		// 그리디 알고리즘
-		
+		Integer[] price = {15, 10, 1};
+		for(int i : price) {
+			if (temp>=i) {
+				int j = temp/i;
+				temp -= i*j;
+				total += i*food.get(i)*j;
+			}
+		}
+		return total/mealNum;
+	}
+	
+	@Override
+	public int searchAvgBreakfastPrice(int year, int month) {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 }
