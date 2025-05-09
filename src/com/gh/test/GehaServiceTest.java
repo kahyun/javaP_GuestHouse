@@ -50,7 +50,7 @@ public class GehaServiceTest {
 		service.setRoomMap(roomMap);
 		
 		try {
-			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, 0, true);
+			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, 30000, true);
 			System.out.println(g1.getName()+"님의 예약입니다 => "+r1);
 		} catch (NoRoomException e) {
 			e.printStackTrace();
@@ -95,6 +95,9 @@ public class GehaServiceTest {
 		
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+	
+		System.out.println("===== 파티 구성 테스트 =====");
+		service.makeParty(new Date(2025, 5, 8));
 	}
 
 }
