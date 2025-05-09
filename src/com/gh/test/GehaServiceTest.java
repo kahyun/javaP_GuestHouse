@@ -119,6 +119,7 @@ public class GehaServiceTest {
 	}
 		
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
+		System.out.println(service.searchRsv(1));
 		
 	}
 	
