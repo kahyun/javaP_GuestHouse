@@ -21,8 +21,8 @@ import com.gh.util.Date;
 public  class GahaServiceImpl implements GehaService {
 	private ArrayList<Reservation> rsvs; // 예약 정보를 담을 ArrayList
 	private HashMap<String, Room> roomMap; // (중복 없는) 방 정보를 Key, 방 객체를 Value로 담은 HashMap
-	private HashMap<Integer, Integer> partyMap; // 예약 번호를 Key, 파티 참가비를 Value로 담은 HashMap
-	private HashMap<Date, Integer> breakfastMap; // 날짜 정보를 Key, 조식 신청 인원 수를 Value로 담은 HashMap
+	private HashMap<Integer, Integer> partyMap = new HashMap<>(); // 예약 번호를 Key, 파티 참가비를 Value로 담은 HashMap
+	private HashMap<Date, Integer> breakfastMap = new HashMap<>(); // 날짜 정보를 Key, 조식 신청 인원 수를 Value로 담은 HashMap
 	public static final int NUMBER_OF_ROOM = 20; // 게스트하우스 전체 방 개수
 	private int rsvNum = 1; // 예약 번호
 	

@@ -1,6 +1,10 @@
 package com.gh.test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.gh.child.Guest;
@@ -47,32 +51,44 @@ public class GehaServiceTest {
 		
 		try {
 			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, 0, true);
-			System.out.println(g1.getName()+"님의 예약입니다 =>"+r1);
+			System.out.println(g1.getName()+"님의 예약입니다 => "+r1);
 		} catch (NoRoomException e) {
 			e.printStackTrace();
 		}
 		try {
 			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, 0, true);
-			System.out.println(g1.getName()+"님의 예약입니다 =>"+r2);
+			System.out.println(g1.getName()+"님의 예약입니다 => "+r2);
 		} catch (NoRoomException e) {
 			e.printStackTrace();
 		}
 		try {
 			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, 0, true);
-			System.out.println(g1.getName()+"님의 예약입니다 =>"+r3);
+			System.out.println(g1.getName()+"님의 예약입니다 => "+r3);
 		} catch (NoRoomException e) {
 			e.printStackTrace();
 		}
 		try {
 			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, 0, true);
-			System.out.println(g1.getName()+"님의 예약입니다 =>"+r4);
+			System.out.println(g1.getName()+"님의 예약입니다 => "+r4);
 		} catch (NoRoomException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("=====전체 방 목록=====");
-		for(Room r : roomMap.values())
-			System.out.println(r);
+		ArrayList<String> keyList = new ArrayList<>(roomMap.keySet());
+		Collections.sort(keyList, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}
+		});
+		Iterator<String> keyIter = keyList.iterator();
+		while(keyIter.hasNext()) {
+			String key = keyIter.next();
+			System.out.println(roomMap.get(key));
+		}
+//		for(Room r : roomMap.values())
+//			System.out.println(r);		
 		
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
