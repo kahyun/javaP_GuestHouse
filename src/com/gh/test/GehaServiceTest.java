@@ -41,10 +41,10 @@ public class GehaServiceTest {
 		roomMap.put("F43", new Room("F43", 4, 'F', 25000, 0));
 		roomMap.put("F44", new Room("F44", 4, 'F', 25000, 0));
 	
-		Guest g1 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
-		Guest g2 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
-		Guest g3 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
-		Guest g4 = new Guest("이지은", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g1 = new Guest("이지은1", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g2 = new Guest("이지은2", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g3 = new Guest("이지은3", 'F', "010-1234-5678", new Date(1993,5,16));
+		Guest g4 = new Guest("이지은4", 'F', "010-1234-5678", new Date(1993,5,16));
 		
 		GahaServiceImpl service = GahaServiceImpl.getInstance();
 		service.setRoomMap(roomMap);
@@ -111,6 +111,11 @@ public class GehaServiceTest {
 			
 		    e.printStackTrace();
 		    
+	
+		System.out.println("=====Date(2025,5,8) 에 조식 신청한 Guest 목록=====");
+		ArrayList<Guest> bf250508 = service.searchBreakfastGuest(new Date(2025,5,8));
+		for(Guest g : bf250508)
+			System.out.println(g);
 	}
 		
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
