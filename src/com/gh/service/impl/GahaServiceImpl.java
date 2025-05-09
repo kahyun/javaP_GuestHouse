@@ -136,9 +136,18 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	@Override
 	public String searchRsv(int rsvNum) { // 특정 R
-		// TODO Auto-generated method stub
-		return null;
+		
+			System.out.println("예약 정본");
+			for (Reservation r : rsvMap.values()) {
+
+				if (r.getRsvNum() == rsvNum) {
+					return r.toString();
+				}
+				
+			}return "예약정보가 없습니다.";
+		
 	}
+	
 	@Override
 	public Reservation[] searchAllRsv(Date rsvDate) { // 전체 r
 		// TODO Auto-generated method stub
@@ -171,9 +180,10 @@ public  class GahaServiceImpl implements GehaService {
 	@Override
 	public String searchRsvCondition(Date rsvDate) {
 //		String s = null; -> 스트링을 했는데  안정적이지 않다.
-//		List<Room> ly = new ArrayList<>(roomMap.k()); //방 번호만 정렬
-//		ly.sort(Comparator.comparing(Room::getRoomNum)); // sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
-		
+		List<Room> ly = new ArrayList<>(roomMap.values()); //방 번호만 정렬
+		//ly.sort(Comparator.comparing(r -> Integer.parseInt(r.getRoomNum().substring(1)))); sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
+		//룸 타입으로 리스트를 정의 하고 거기 안에 roomMap 정보를 담아서 ly라는 리스트를 정렬 int 기준으로 r은 람다인데 위에 룸 타입 정의해서 가능한듯
+		//ly.sort(Comparator.comparing(Room r) -> r.);
 		StringBuilder sb = new StringBuilder();
 		for(Room r : roomMap.values()) {
 			String room = r.getRoomNum();
