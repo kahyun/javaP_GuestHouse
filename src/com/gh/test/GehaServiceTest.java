@@ -74,6 +74,9 @@ public class GehaServiceTest {
 			e.printStackTrace();
 		}
 
+		service.deleteRsv(2);
+		service.deleteRsv(7);
+		
 		System.out.println("=====전체 방 목록=====");
 		ArrayList<String> keyList = new ArrayList<>(roomMap.keySet());
 		Collections.sort(keyList, new Comparator<String>() {
