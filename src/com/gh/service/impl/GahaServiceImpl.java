@@ -91,13 +91,37 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public void updateRsv(int rsvNum, Reservation rsv) { // U
+		// 기존 예약 정보 확인
+				Reservation oldRsv = rsvMap.get(rsvNum);
+
+				if (oldRsv == null)
+					return;// 예약이 없으면 무시
+
+				Room oldRoom = oldRsv.getRsvRoom();
+				Room newRoom = rsv.getRsvRoom();
+
+				// 방이 바뀌었을때
+				if (!oldRoom.getRoomNum().equals(newRoom.getRoomNum())) {
+					//기존 방 인원 -1
+					Room updated01Room = new Room(oldRoom.getRoomNum(), oldRoom.getRoomType(), oldRoom.getGender(),
+							oldRoom.getPrice(), oldRoom.getBooked() - 1);
+
+					roomMap.put(updated01Room.getRoomNum(), updated01Room);
+					//새방 인원 +1
+					Room updatedRoom = new Room(newRoom.getRoomNum(), newRoom.getRoomType(), newRoom.getGender(),
+							newRoom.getPrice(), newRoom.getBooked() + 1);
+					roomMap.put(updatedRoom.getRoomNum(), updatedRoom);
+				}
+				
+				//rsvMap 갱신
+				rsvMap.put(rsvNum, rsv);
+	
 				
 				// 방 정보가 바꼈는지 먼저 확인하고 방 정보가 바꼈을 때만 roomMap 을 건드린다
 				// roomMap 해시맵 정보도 수정해야 함
 				// (방 예약인원 수정 / 원래 예약했던 방 인원 -1 새롭게 예약한 방 인원 +1)
-				
+
 				// rsvs 배열도 수정해야하고 (예약 수정)
-		
 	}
 	
 	@Override
@@ -138,8 +162,19 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public String searchRsvCondition(Date rsvDate) {
-		// TODO Auto-generated method stub
-		return null;
+//		String s = null; -> 스트링을 했는데  안정적이지 않다.
+//		List<Room> ly = new ArrayList<>(roomMap.k()); //방 번호만 정렬
+//		ly.sort(Comparator.comparing(Room::getRoomNum)); // sb는 문자열 덩어리라 정렬 안됨 그 전에 정렬 하고감 
+		
+		StringBuilder sb = new StringBuilder();
+		for(Room r : roomMap.values()) {
+			String room = r.getRoomNum();
+			int booked = r.getBooked();
+			int max = r.getRoomType();
+			 sb.append(room).append(" ").append(booked).append("/").append(max).append("\n");
+		}
+		
+		return sb.toString();
 	}
 	@Override
 	public int searchAvgBreakfastPrice(int year, int month) {
@@ -149,9 +184,84 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public void makeParty(Date rsvDate) {
-		// TODO Auto-generated method stub
-		
+//		// 1. 해당 날짜의 예약자 중 취소하지 않은 사람만 todayRsvList에 담기
+//	    List<Reservation> todayRsvList = new ArrayList<>();
+//	    for (Reservation r : rsvMap.values()) {
+//	        if (r.getRsvDate().equals(rsvDate)) {
+//	            todayRsvList.add(r);
+//	        }
+//	    }
+//
+//	    // 2. 참가비 기준 그룹 나누기
+//	    ArrayList<Reservation> fee30 = new ArrayList<>();
+//	    ArrayList<Reservation> fee40 = new ArrayList<>();
+//	    ArrayList<Reservation> fee50 = new ArrayList<>();
+//
+//	    for (int i = 0; i < todayRsvList.size(); i++) {
+//	        Reservation r = todayRsvList.get(i);
+//	        if (r.getAttendFee() == 30000) {
+//	            fee30.add(r);
+//	        } else if (r.getAttendFee() == 40000) {
+//	            fee40.add(r);
+//	        } else if (r.getAttendFee() == 50000) {
+//	            fee50.add(r);
+//	        }
+//	    }
+//
+//	 // 3. 각 참가비 그룹에 대해 파티 구성
+//	    ArrayList<Reservation>[] groups = new ArrayList[] { fee30, fee40, fee50 };
+//
+//	    for (int g = 0; g < groups.length; g++) {
+//	        ArrayList<Reservation> group = groups[g];
+//
+//	        if (group.size() < 4) {
+//	            System.out.println("참가비 " + group.get(0).getAttendFee() + "원 파티 인원이 부족합니다. 재배치 필요");
+//	            continue;
+//	        }
+//
+//	        int index = 0;
+//	        while (index < group.size()) {
+//	            int remain = group.size() - index;
+//
+//	            if (remain >= 11 && remain <= 13) {
+//	                Party party1 = new Party(rsvDate);
+//	                Party party2 = new Party(rsvDate);
+//
+//	                for (int i = 0; i < remain / 2; i++) {
+//	                    party1.addMember(group.get(index + i).getRsvNum());
+//	                }
+//	                for (int i = remain / 2; i < remain; i++) {
+//	                    party2.addMember(group.get(index + i).getRsvNum());
+//	                }
+//
+//	                System.out.println("파티1 (총원 " + party1.getMembers().size() + "): " + party1);
+//	                System.out.println("파티2 (총원 " + party2.getMembers().size() + "): " + party2);
+//	                index += remain;
+//
+//	            } else if (remain > 10) {
+//	                Party party = new Party(rsvDate);
+//	                for (int i = 0; i < 10; i++) {
+//	                    party.addMember(group.get(index + i).getRsvNum());
+//	                }
+//	                System.out.println("파티 구성 (10명): " + party);
+//	                index += 10;
+//
+//	            } else if (remain >= 4 && remain <= 10) {
+//	                Party party = new Party(rsvDate);
+//	                for (int i = index; i < group.size(); i++) {
+//	                    party.addMember(group.get(i).getRsvNum());
+//	                }
+//	                System.out.println("파티 구성 (마지막 " + party.getMembers().size() + "명): " + party);
+//	                break;
+//
+//	            } else {
+//	                System.out.println("남은 인원 파티 구성 불가");
+//	                break;
+//	            }
+//	        }
+//	    }
 	}
+		
 	@Override
 	public int makeBreakfast(Date rsvDate) {
 		// TODO Auto-generated method stub
