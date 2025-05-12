@@ -39,7 +39,10 @@ public  class GahaServiceImpl implements GehaService {
 	public HashMap<String, Room> getRoomMap() {
 	    return roomMap;
 	}
-	
+	public HashMap<Integer, Integer> getPartyMap() {
+	    return partyMap;
+	}
+
 	@Override
 	public TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) { // 예약 가능 여부 확인
 		TreeSet<Room> temp = new TreeSet<>();
@@ -76,7 +79,9 @@ public  class GahaServiceImpl implements GehaService {
 		if(tempRsv == null)
 			throw new NoRoomException("예약 가능한 방이 없습니다.");
 		// attendFee 랑 eatBreakfast 인자값 받은 거 Party Map과 Breakfast Map에 넣기
-		partyMap.put(rsvNum, party.getAttendFee());
+		 if (party != null) {
+		        partyMap.put(rsvNum, party.getAttendFee());
+		    }
 		if(eatBreakfast == true)
 			breakfastMap.put(rsvNum, rsvDate);
 		rsvNum++;
@@ -229,7 +234,8 @@ public  class GahaServiceImpl implements GehaService {
 	    ArrayList<Reservation> five = new ArrayList<>();
 
 	    for (Reservation r : rsvList) {
-	        int fee = partyMap.get(r.getRsvNum());
+	    	Integer fee = partyMap.get(r.getRsvNum());
+	        if (fee == null) continue;
 	        if (fee == 30000) {
 	            three.add(r);
 	        } else if (fee == 40000) {
