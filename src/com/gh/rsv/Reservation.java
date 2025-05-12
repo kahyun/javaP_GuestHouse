@@ -38,7 +38,7 @@ public class Reservation {
 	}
 
 	public void setParty(Party party) {
-		party = party;
+		this.party = party;
 	}
 
 	public int getRsvNum() {

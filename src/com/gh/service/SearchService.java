@@ -33,6 +33,14 @@ public interface SearchService {
 	Party[] searchParty(Date rsvDate);
 	
 	/**
+	 * 특정 일자를 기준으로 조식을 신청한 인원 수를 조회하는 기능
+	 * @param rsvDate
+	 * @return
+	 * @throws NoBreakfastException
+	 */
+	int searchBreakfastNum(Date rsvDate) throws NoBreakfastException;
+	
+	/**
 	 * 특정 일자를 기준으로 조식을 신청한 게스트 목록을 조회하는 기능
 	 * @param resvDate
 	 * @return 특정 일자의 조식 신청 Guest 배열
@@ -69,5 +77,4 @@ public interface SearchService {
 	 * @return 예약 가능한 방 목록을 TreeSet 타입으로 오름차순 반환
 	 */
 	TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender);
-
 }

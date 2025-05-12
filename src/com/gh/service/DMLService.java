@@ -1,6 +1,7 @@
 package com.gh.service;
 
 import com.gh.child.Guest;
+import com.gh.exception.NoReservationException;
 import com.gh.exception.NoRoomException;
 import com.gh.rsv.Breakfast;
 import com.gh.rsv.Party;
@@ -25,11 +26,11 @@ public interface DMLService {
 	 * @param rsvNum
 	 * @param rsv
 	 */
-	void updateRsv(int rsvNum, Reservation rsv);
+	void updateRsv(int rsvNum, Reservation rsv) throws NoReservationException;
 	
 	/**
 	 * Guest 가 예약번호를 조회하여 예약 내역을 삭제하는 기능
 	 * @param rsvNum
 	 */
-	void deleteRsv(int rsvNum);
+	void deleteRsv(int rsvNum) throws NoReservationException;
 }
