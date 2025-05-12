@@ -67,14 +67,14 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public Reservation makeRsv(Date rsvDate, char gender, int roomType,
-						Guest rsvGuest, int attendFee, boolean eatBreakfast) throws NoRoomException { // C
+						Guest rsvGuest, Party party, boolean eatBreakfast) throws NoRoomException { // C
 		TreeSet<Room> tempRoom = new TreeSet<>();
 		Reservation tempRsv = null;
 		tempRoom = searchAvailableRoom(rsvDate, gender);
 		for(Room r : tempRoom) { // gender 조건 만족하는 방 중에서
 			if(r.getRoomType() == roomType) { // 방 타입(인원수)가 맞다면
 				r.setBooked(r.getBooked()+1);
-				tempRsv = new Reservation(rsvNum, rsvDate, rsvGuest, r, attendFee, eatBreakfast);
+				tempRsv = new Reservation(rsvNum, rsvDate, rsvGuest, r, party, eatBreakfast);
 				rsvMap.put(rsvNum, tempRsv);
 				break;
 			}
@@ -82,7 +82,7 @@ public  class GahaServiceImpl implements GehaService {
 		if(tempRsv == null)
 			throw new NoRoomException("예약 가능한 방이 없습니다.");
 		// attendFee 랑 eatBreakfast 인자값 받은 거 Party Map과 Breakfast Map에 넣기
-		partyMap.put(rsvNum, attendFee);
+		partyMap.put(rsvNum, party.getAttendFee());
 		if(eatBreakfast == true)
 			breakfastMap.put(rsvNum, rsvDate);
 		rsvNum++;
@@ -166,13 +166,26 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public Party searchParty(int rsvNum) {
-		// TODO Auto-generated method stub
-		return null;
+	    Reservation rsv = rsvMap.get(rsvNum);
+	    if (rsv != null) {
+	        return rsv.getParty();
+	    }
+	    return null; // 예약이 없으면 null 리턴
 	}
+
 	@Override
 	public Party[] searchParty(Date rsvDate) {
-		// TODO Auto-generated method stub
-		return null;
+	    ArrayList<Party> parties = new ArrayList<>();
+	    for (Reservation r : rsvMap.values()) {
+	        if (r.getRsvDate().getYear() == rsvDate.getYear()
+	                && r.getRsvDate().getMonth() == rsvDate.getMonth()
+	                && r.getRsvDate().getDay() == rsvDate.getDay()) {
+	            if (r.getParty() != null) { // 파티가 배정된 경우만
+	                parties.add(r.getParty());
+	            }
+	        }
+	    }
+	    return parties.toArray(new Party[0]);
 	}
 	
 	@Override
@@ -207,83 +220,93 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public void makeParty(Date rsvDate) {
-//		// 1. 해당 날짜의 예약자 중 취소하지 않은 사람만 todayRsvList에 담기
-//	    List<Reservation> todayRsvList = new ArrayList<>();
-//	    for (Reservation r : rsvMap.values()) {
-//	        if (r.getRsvDate().equals(rsvDate)) {
-//	            todayRsvList.add(r);
-//	        }
-//	    }
-//
-//	    // 2. 참가비 기준 그룹 나누기
-//	    ArrayList<Reservation> fee30 = new ArrayList<>();
-//	    ArrayList<Reservation> fee40 = new ArrayList<>();
-//	    ArrayList<Reservation> fee50 = new ArrayList<>();
-//
-//	    for (int i = 0; i < todayRsvList.size(); i++) {
-//	        Reservation r = todayRsvList.get(i);
-//	        if (r.getAttendFee() == 30000) {
-//	            fee30.add(r);
-//	        } else if (r.getAttendFee() == 40000) {
-//	            fee40.add(r);
-//	        } else if (r.getAttendFee() == 50000) {
-//	            fee50.add(r);
-//	        }
-//	    }
-//
-//	 // 3. 각 참가비 그룹에 대해 파티 구성
-//	    ArrayList<Reservation>[] groups = new ArrayList[] { fee30, fee40, fee50 };
-//
-//	    for (int g = 0; g < groups.length; g++) {
-//	        ArrayList<Reservation> group = groups[g];
-//
-//	        if (group.size() < 4) {
-//	            System.out.println("참가비 " + group.get(0).getAttendFee() + "원 파티 인원이 부족합니다. 재배치 필요");
-//	            continue;
-//	        }
-//
-//	        int index = 0;
-//	        while (index < group.size()) {
-//	            int remain = group.size() - index;
-//
-//	            if (remain >= 11 && remain <= 13) {
-//	                Party party1 = new Party(rsvDate);
-//	                Party party2 = new Party(rsvDate);
-//
-//	                for (int i = 0; i < remain / 2; i++) {
-//	                    party1.addMember(group.get(index + i).getRsvNum());
-//	                }
-//	                for (int i = remain / 2; i < remain; i++) {
-//	                    party2.addMember(group.get(index + i).getRsvNum());
-//	                }
-//
-//	                System.out.println("파티1 (총원 " + party1.getMembers().size() + "): " + party1);
-//	                System.out.println("파티2 (총원 " + party2.getMembers().size() + "): " + party2);
-//	                index += remain;
-//
-//	            } else if (remain > 10) {
-//	                Party party = new Party(rsvDate);
-//	                for (int i = 0; i < 10; i++) {
-//	                    party.addMember(group.get(index + i).getRsvNum());
-//	                }
-//	                System.out.println("파티 구성 (10명): " + party);
-//	                index += 10;
-//
-//	            } else if (remain >= 4 && remain <= 10) {
-//	                Party party = new Party(rsvDate);
-//	                for (int i = index; i < group.size(); i++) {
-//	                    party.addMember(group.get(i).getRsvNum());
-//	                }
-//	                System.out.println("파티 구성 (마지막 " + party.getMembers().size() + "명): " + party);
-//	                break;
-//
-//	            } else {
-//	                System.out.println("남은 인원 파티 구성 불가");
-//	                break;
-//	            }
-//	        }
-//	    }
+	    ArrayList<Reservation> rsvList = new ArrayList<>();
+	    for (Reservation r : rsvMap.values()) {
+	        if (r.getRsvDate().getYear() == rsvDate.getYear()
+	                && r.getRsvDate().getMonth() == rsvDate.getMonth()
+	                && r.getRsvDate().getDay() == rsvDate.getDay()) {
+	            rsvList.add(r);
+	        }
+	    }
+
+	    // 참가비별로 분류
+	    ArrayList<Reservation> three = new ArrayList<>();
+	    ArrayList<Reservation> four = new ArrayList<>();
+	    ArrayList<Reservation> five = new ArrayList<>();
+
+	    for (Reservation r : rsvList) {
+	        int fee = partyMap.get(r.getRsvNum());
+	        if (fee == 30000) {
+	            three.add(r);
+	        } else if (fee == 40000) {
+	            four.add(r);
+	        } else if (fee == 50000) {
+	            five.add(r);
+	        }
+	    }
+
+	    int partyNumSeq = 1;
+
+	    // 각 그룹별로 처리
+	    ArrayList<Reservation>[] partyGroups = new ArrayList[]{three, four, five};
+	    for (ArrayList<Reservation> group : partyGroups) {
+	        int idx = 0;
+	        while (idx < group.size()) {
+	            int remaining = group.size() - idx;
+	            if (remaining >= 11 && remaining <= 13) {
+	                // 11~13명은 반으로 나눈다
+	                int mid = remaining / 2;
+	                for (int i = 0; i < mid; i++) {
+	                    group.get(idx + i).setParty(new Party(partyNumSeq, partyMap.get(group.get(idx + i).getRsvNum())));
+	                }
+	                partyNumSeq++;
+	                for (int i = mid; i < remaining; i++) {
+	                    group.get(idx + i).setParty(new Party(partyNumSeq, partyMap.get(group.get(idx + i).getRsvNum())));
+	                }
+	                partyNumSeq++;
+	                idx += remaining;
+	            } else if (remaining >= 4 && remaining <= 10) {
+	                // 4명 이상 10명 이하
+	                for (int i = 0; i < remaining; i++) {
+	                    group.get(idx + i).setParty(new Party(partyNumSeq, partyMap.get(group.get(idx + i).getRsvNum())));
+	                }
+	                partyNumSeq++;
+	                idx += remaining;
+	            } else if (remaining < 4) {
+	                // 남은 인원이 4명 미만이면
+	                // 다음 그룹에 재배치할 거니까 break
+	                break;
+	            }
+	        }
+	    }
+
+	    // 4명 미만 재배치
+	    ArrayList<Reservation> leftovers = new ArrayList<>();
+	    for (ArrayList<Reservation> group : partyGroups) {
+	        for (Reservation r : group) {
+	            if (r.getParty() == null) {
+	                leftovers.add(r);
+	            }
+	        }
+	    }
+
+	    int idx = 0;
+	    while (idx < leftovers.size()) {
+	        int remaining = leftovers.size() - idx;
+	        if (remaining >= 4) {
+	            int count = Math.min(remaining, 10); // 10명 넘으면 안 됨
+	            for (int i = 0; i < count; i++) {
+	                leftovers.get(idx + i).setParty(new Party(partyNumSeq, partyMap.get(leftovers.get(idx + i).getRsvNum())));
+	            }
+	            partyNumSeq++;
+	            idx += count;
+	        } else {
+	            // 4명도 안 되는 나머지는 파티 배정 안 함
+	            break;
+	        }
+	    }
 	}
+
 		
 	@Override
 	public int makeBreakfast(Date rsvDate) throws NoBreakfastException {
