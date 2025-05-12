@@ -5,17 +5,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
 import com.gh.exception.NoRoomException;
-import com.gh.rsv.FoodShop;
 import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
 import com.gh.rsv.Room;
 import com.gh.service.impl.GahaServiceImpl;
 import com.gh.util.Date;
+import com.gh.util.FoodType;
 
 public class GehaServiceTest {
 
@@ -165,7 +164,13 @@ public class GehaServiceTest {
 		System.out.println();
 		System.out.println("=====조식을 준비합니다.=====");
 		try {
-			System.out.println("인당 가격은 "+service.makeBreakfast(new Date(2025,5,8))+"입니다.");
+			System.out.println("조식 타입은 "+FoodType.Korean.getValue()+", "+"인당 가격은 "+service.makeBreakfast(new Date(2025,5,8))+"입니다.");
+		} catch (NoBreakfastException e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("=====2025년 5월의 조식 가격 평균=====");
+		try {
+			System.out.println(service.searchAvgBreakfastPrice(2025, 5));
 		} catch (NoBreakfastException e) {
 			System.out.println(e.getMessage());
 		}
@@ -177,11 +182,7 @@ public class GehaServiceTest {
 		System.out.println();
 		System.out.println("=====Date(2025,5,8)의 방 예약 현황=====");
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
-		ArrayList<Guest> bf250508 = service.searchBreakfastGuest(new Date(2025,5,8));
-		for(Guest g : bf250508)
-			System.out.println(g);
 
-	
 		String[] rsvCon = service.searchRsvCondition(new Date(2025,5,8)).split("-");
 		ArrayList<String> rsvConList = new ArrayList<>();
 		for(int i=0; i<rsvCon.length; i++)
@@ -201,7 +202,6 @@ public class GehaServiceTest {
 		System.out.println(service.searchRsv(1));
 		
 	}
-	
 	
 
 }

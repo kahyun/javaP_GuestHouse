@@ -1,13 +1,7 @@
 package com.gh.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
@@ -321,7 +315,7 @@ public  class GahaServiceImpl implements GehaService {
 		int mealNum = mealList.size();
 		int temp = mealNum;
 		int total = 0;
-		System.out.println("조식 신청 인원은 "+mealNum+"명 입니다.");
+//		System.out.println("조식 신청 인원은 "+mealNum+"명 입니다.");
 		// 그리디 알고리즘
 		Integer[] price = {15, 10, 1};
 		for(int i : price) {
@@ -335,8 +329,17 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	
 	@Override
-	public int searchAvgBreakfastPrice(int year, int month) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int searchAvgBreakfastPrice(int year, int month) throws NoBreakfastException {
+		HashMap<Date, Integer> findBfPrice = new HashMap<>();
+		int total = 0; // makeBreakfast 반환값을 더할 변수
+		for(Date d : breakfastMap.values()) {
+			if(d.getYear() == year && d.getMonth() == month) { // 찾으려는 연도, 월과 일치하는 날이라면
+				if(!findBfPrice.containsKey(d))
+					findBfPrice.put(d, makeBreakfast(d));
+			}
+		}
+		for(int i : findBfPrice.values())
+			total += i;
+		return total/findBfPrice.size();
 	}
 }
