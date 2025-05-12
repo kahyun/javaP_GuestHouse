@@ -11,8 +11,17 @@ import com.gh.parent.User;
 import com.gh.util.Date;
 
 public class Guest extends User{
+	/**
+	 * Guest 의 성별...남성은 'M', 여성은 'F'
+	 */
 	private char gender;
+	/**
+	 * Guest 의 연락처...전화번호는 '-'를 포함한다
+	 */
 	private String hp;
+	/**
+	 * Guest 의 생년월일...YYYY/MM/DD 형식을 갖는다
+	 */
 	private Date birthDate;
 	
 	public Guest() {

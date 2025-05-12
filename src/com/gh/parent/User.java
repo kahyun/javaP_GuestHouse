@@ -7,6 +7,9 @@ package com.gh.parent;
  * </pre>
  */
 public abstract class User {
+	/**
+	 * User(Guest) 의 이름
+	 */
 	private String name;
 
 	public User() {}

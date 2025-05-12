@@ -58,8 +58,9 @@ public interface SearchService {
 	 * @param year
 	 * @param month
 	 * @return 평균 가격 반환
+	 * @throws NoBreakfastException 
 	 */
-	int searchAvgBreakfastPrice(int year,int month);
+	int searchAvgBreakfastPrice(int year,int month) throws NoBreakfastException;
 
 	/**
 	 * 특정 날짜에 특정 성별의 예약 가능한 방 목록을 조회하는 기능
