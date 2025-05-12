@@ -17,7 +17,7 @@ public class Breakfast {
 		this.eatBreakfast = eatBreakfast;
 	}
 
-	public boolean isEatBreakfast() {
+	public boolean getEatBreakfast() {
 		return eatBreakfast;
 	}
 

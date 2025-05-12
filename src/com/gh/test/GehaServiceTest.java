@@ -9,6 +9,7 @@ import java.util.Iterator;
 import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
 import com.gh.exception.NoRoomException;
+import com.gh.rsv.Breakfast;
 import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
 import com.gh.rsv.Room;
@@ -52,25 +53,25 @@ public class GehaServiceTest {
 		service.setRoomMap(roomMap);
 		
 		try {
-			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, new Party(0,30000), true);
+			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, null, new Breakfast(true));
 			System.out.println(g1.getName()+"님의 예약입니다 => "+r1);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, new Party(0,0), true);
+			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, null, new Breakfast(true));
 			System.out.println(g2.getName()+"님의 예약입니다 => "+r2);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, new Party(0,0), true);
+			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, null, new Breakfast(true));
 			System.out.println(g3.getName()+"님의 예약입니다 => "+r3);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, new Party(0,0), true);
+			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, null, new Breakfast(true));
 			System.out.println(g4.getName()+"님의 예약입니다 => "+r4);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
@@ -127,7 +128,7 @@ public class GehaServiceTest {
 		
 		try {
 		    Room changedRoom = roomMap.get("F21"); // 2인실 방 하나 선택
-		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, new Party(0,0), false); // 예약번호 1번 수정
+		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, null, new Breakfast(false)); // 예약번호 1번 수정
 		    service.updateRsv(1, newRsv); // 번호 1번 예약자 g1의 방을 변경
 
 		    System.out.println("==============업데이트 후 방 상태===============");

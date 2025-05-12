@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
 import com.gh.exception.NoRoomException;
+import com.gh.rsv.Breakfast;
 import com.gh.rsv.FoodShop;
 import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
@@ -61,14 +62,14 @@ public  class GahaServiceImpl implements GehaService {
 	
 	@Override
 	public Reservation makeRsv(Date rsvDate, char gender, int roomType,
-						Guest rsvGuest, Party party, boolean eatBreakfast) throws NoRoomException { // C
+						Guest rsvGuest, Party party, Breakfast breakfast) throws NoRoomException { // C
 		TreeSet<Room> tempRoom = new TreeSet<>();
 		Reservation tempRsv = null;
 		tempRoom = searchAvailableRoom(rsvDate, gender);
 		for(Room r : tempRoom) { // gender 조건 만족하는 방 중에서
 			if(r.getRoomType() == roomType) { // 방 타입(인원수)가 맞다면
 				r.setBooked(r.getBooked()+1);
-				tempRsv = new Reservation(rsvNum, rsvDate, rsvGuest, r, party, eatBreakfast);
+				tempRsv = new Reservation(rsvNum, rsvDate, rsvGuest, r, party, breakfast);
 				rsvMap.put(rsvNum, tempRsv);
 				break;
 			}
@@ -77,7 +78,7 @@ public  class GahaServiceImpl implements GehaService {
 			throw new NoRoomException("예약 가능한 방이 없습니다.");
 		// attendFee 랑 eatBreakfast 인자값 받은 거 Party Map과 Breakfast Map에 넣기
 		partyMap.put(rsvNum, party.getAttendFee());
-		if(eatBreakfast == true)
+		if(breakfast.getEatBreakfast() == true)
 			breakfastMap.put(rsvNum, rsvDate);
 		rsvNum++;
 		return tempRsv;
@@ -108,9 +109,9 @@ public  class GahaServiceImpl implements GehaService {
 			roomMap.put(updatedRoom.getRoomNum(), updatedRoom);
 		}
 		// breakMap 갱신
-		if(rsvMap.get(rsvNum).getEatBreakfast() == false && rsv.getEatBreakfast() == true)
+		if(rsvMap.get(rsvNum).getBreakfast().getEatBreakfast() == false && rsv.getBreakfast().getEatBreakfast() == true)
 			breakfastMap.put(rsvNum, rsv.getRsvDate());
-		else if(rsvMap.get(rsvNum).getEatBreakfast() == true && rsv.getEatBreakfast() == false)
+		else if(rsvMap.get(rsvNum).getBreakfast().getEatBreakfast() == true && rsv.getBreakfast().getEatBreakfast() == false)
 			breakfastMap.remove(rsvNum);
 		//rsvMap 갱신
 		rsvMap.put(rsvNum,rsv);
