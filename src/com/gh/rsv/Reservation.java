@@ -71,7 +71,7 @@ public class Reservation {
 		this.attendFee = attendFee;
 	}
 
-	public boolean isEatBreakfast() {
+	public boolean getEatBreakfast() {
 		return eatBreakfast;
 	}
 
