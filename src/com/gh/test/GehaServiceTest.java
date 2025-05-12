@@ -1,5 +1,8 @@
 package com.gh.test;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -413,10 +416,26 @@ public class GehaServiceTest {
 						int month6 = sc.nextInt();
 						System.out.println("조회할 날짜의 일을 입력하세요 => ");
 						int day6 = sc.nextInt();
-						System.out.println(year6+"/"+month6+"/"+day6+"의 모든 예약 목록입니다.");
-						ArrayList<Reservation> allRsv = service.searchAllRsv(new Date(year6,month6,day6));
-						for(Reservation r : allRsv)
-							System.out.println(r);
+						Date queryDate = new Date(year6, month6, day6);
+					    System.out.println(queryDate + "의 모든 예약 목록입니다:");
+						ArrayList<Reservation> allRsv = service.searchAllRsv(queryDate);
+						
+						try (BufferedWriter writer = new BufferedWriter(new FileWriter("reservation_output.txt"))) {
+					        if (allRsv == null || allRsv.isEmpty()) {
+					            System.out.println("예약이 없습니다.");
+					            writer.write("예약이 없습니다.");
+					            writer.newLine();
+					        } else {
+					            for (Reservation r : allRsv) {
+					                System.out.println(r.toString());    // 콘솔 출력
+					                writer.write(r.toString());          // 파일 저장
+					                writer.newLine();            // 줄바꿈
+					            }
+					        }
+					        System.out.println("파일 저장 완료: reservation_output.txt");
+					    } catch (IOException e) {
+					        System.out.println("파일 저장 중 오류 발생: " + e.getMessage());
+					    }
 						break;
 					case 7: // 7. 날짜별 방 예약 현황 조회하기
 						// Date(2025,5,8) 조회
