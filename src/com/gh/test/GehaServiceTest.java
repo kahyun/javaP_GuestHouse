@@ -95,10 +95,10 @@ public class GehaServiceTest {
 //		for(Room r : roomMap.values())
 //			System.out.println(r);		
 		
-		System.out.println("=====예약 가능한 F 방 목록=====");
+		System.out.println("===========예약 가능한 F 방 목록=============");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
 	
-		System.out.println("===== 파티 구성 테스트 =====");
+		System.out.println("================ 파티 구성 테스트 =================");
 		service.makeParty(new Date(2025, 5, 8));
 		
 		try {
@@ -106,15 +106,11 @@ public class GehaServiceTest {
 		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, 0, false); // 예약번호 1번 수정
 		    service.updateRsv(1, newRsv); // 번호 1번 예약자 g1의 방을 변경
 
-		    System.out.println("업데이트 후 예약 정보:");
-		    System.out.println(newRsv);
-
-		    System.out.println("업데이트 후 방 상태:");
+		    System.out.println("==============업데이트 후 방 상태===============");
 		    System.out.println("기존방(F11): " + roomMap.get("F11"));
 		    System.out.println("신규방(F21): " + roomMap.get("F21"));
 		} catch (Exception e) {
-			
-		    e.printStackTrace();
+		    e.getMessage();
 		}
 		
 		System.out.println("=====Date(2025,5,8) 에 조식 신청한 Guest 목록=====");
@@ -151,6 +147,26 @@ public class GehaServiceTest {
 		
 		System.out.println("=====Date(2025,5,8)의 방 예약 현황=====");
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
+		ArrayList<Guest> bf250508 = service.searchBreakfastGuest(new Date(2025,5,8));
+		for(Guest g : bf250508)
+			System.out.println(g);
+
+	
+		String[] rsvCon = service.searchRsvCondition(new Date(2025,5,8)).split("-");
+		ArrayList<String> rsvConList = new ArrayList<>();
+		for(int i=0; i<rsvCon.length; i++)
+			rsvConList.add(rsvCon[i]);
+		Collections.sort(rsvConList, new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}
+			
+		});
+		for(String s : rsvConList)
+			System.out.println(s);
+
 		System.out.println("=====예약 번호 1로 조회한 예약 정보=====");
 		System.out.println(service.searchRsv(1));
 		
