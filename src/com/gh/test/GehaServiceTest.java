@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 
 import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
@@ -100,7 +102,7 @@ public class GehaServiceTest {
 		System.out.println();
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
-	
+		
 		System.out.println();
 		System.out.println("===== 파티 구성 테스트 =====");
 		
@@ -204,13 +206,94 @@ public class GehaServiceTest {
 			}
 			
 		});
-		for(String s : rsvConList)
-			System.out.println(s);
-
-		System.out.println("=====예약 번호 1로 조회한 예약 정보=====");
-		System.out.println(service.searchRsv(1));
+	
+			
+		try(Scanner sc = new Scanner(System.in)){
+			while (true) {
+				System.out.println("\n=========게하 예약 시스템 ========");
+				System.out.println("1.예약하기 \n2.전체 방 보기 \n3.조식 가격 보기  \n4.파티 구성 보기 \n5.종료");
+				int menu = sc.nextInt();
+				sc.nextLine();//버퍼 문제 생겨서 같이 물어보게 됨
+				
+				switch (menu) {
+				case 1: 
+						System.out.println("이름:");
+						String name = sc.nextLine();
+						
+						System.out.println("대표자 해드폰 번호:(-넣어주세요)");
+						String phnum = sc.nextLine();
+						
+						System.out.println("성별 (M/F):");
+						char gender = sc.nextLine().toUpperCase().charAt(0);
+						
+						System.out.println("인원수 (1~4):");
+						int person = sc.nextInt();
+						
+						System.out.println("조식 포함(True/False):");
+						boolean braekfast = sc.nextBoolean();
+						
+						System.out.println("파티 참여(True/False):");
+						Boolean joinParty = sc.nextBoolean();
+						
+						Guest guset = new Guest(name,gender,phnum,new Date(1998,2,22));
+						Party party = joinParty ? new Party(0,30000) : new Party(0,0); 
+						
+						try {
+							Reservation rsv = service.makeRsv(new Date(2025,5,13), gender, person, guset, party, new Breakfast(braekfast));
+							System.out.println("에약이 완료되었습니다!^^"+rsv);
+						}catch (NoRoomException e) {
+						System.out.println("예약 실패되었습니다."+ e.getMessage());
+						}
+						break;
+						
+				case 2://정렬해서 전체방 목록 보기
+						System.out.println("\n 전체 방 목록:");
+						List<String> keyList1 = new ArrayList<>(roomMap.keySet());
+						Collections.sort(keyList1);
+						for(String k : keyList1) {
+							System.out.println(roomMap.get(k));
+						}
+						break;
+						
+				case 3:
+						System.out.println("\n======== 2025년 5월 조식 가격 평균========");
+						try {
+							int avg = service.searchAvgBreakfastPrice(2025, 5);
+							System.out.println("조식타입:"+FoodType.Korean.getValue());
+							System.out.println("평균 조식 가격:"+ avg);
+							
+						}catch(Exception e) {
+							System.out.println("조식 정보가 없습니다."+e.getMessage());
+						}
+						break;
+				case 4:
+					System.out.println("\n =========2025-5-13 파티 목록==========");
+					try {
+					    Party[] parties = service.searchParty(new Date(2025, 5, 13));
+					    if (parties.length == 0) {
+					        System.out.println("등록된 파티가 없습니다.");
+					    } else {
+					        for (Party p1 : parties) {
+					            System.out.println(p1);
+					        }
+					    }
+					} catch (Exception e) {
+					    System.out.println("파티 정보를 가져오는 중 오류: " + e.getMessage());
+					}
+						break;
+						
+					
+				case 5:
+					System.out.println("프로그램 종료합니다!! bbb");
+					return;		
+					
+				default:
+					System.out.println("잘못된 입력입니다. 다시 시도해 주세요!");
+				}
+			
+				
+			}
+		}
 		
 	}
-	
-
 }
