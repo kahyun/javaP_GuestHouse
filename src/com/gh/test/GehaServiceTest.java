@@ -324,9 +324,17 @@ public class GehaServiceTest {
 						int day1 = sc.nextInt();
 						System.out.println(year1+"/"+month1+"/"+day1+"의 예약 가능한 방 목록입니다.");
 						System.out.println("=====예약 가능한 여자 방 목록=====");
-						System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+						try {
+							System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
+						} catch (NoRoomException e) {
+							System.out.println(e.getMessage());
+						}
 						System.out.println("=====예약 가능한 남자 방 목록=====");
-						System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'M'));
+						try {
+							System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'M'));
+						} catch (NoRoomException e) {
+							System.out.println(e.getMessage());
+						}
 						break;
 					case 2: // 2. 예약하기
 						System.out.println("이름 : ");
