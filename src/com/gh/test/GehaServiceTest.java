@@ -110,11 +110,12 @@ public class GehaServiceTest {
 		                       ", 이름: " + r.getRsvGuest().getName() +
 		                       ", 파티번호: " + (r.getParty().getAttendFee() != 0 ? r.getParty().getPartyNum() : "없음"));
 		}
+		System.out.println();
 		System.out.println("===== 예약번호 1번의 파티 정보 =====");
 		Party p = service.searchParty(1);
 		System.out.println("partyNum: " + p.getPartyNum() + ", attendFee: " + p.getAttendFee());
 
-
+		System.out.println();
 		System.out.println("===== 2025-05-08 날짜의 파티 목록 =====");
 		Party[] partyList = service.searchParty(new Date(2025,5,8));
 		for (Party party : partyList) {
