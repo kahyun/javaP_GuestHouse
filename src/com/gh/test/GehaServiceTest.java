@@ -11,6 +11,7 @@ import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
 import com.gh.exception.NoRoomException;
 import com.gh.rsv.FoodShop;
+import com.gh.rsv.Party;
 import com.gh.rsv.Reservation;
 import com.gh.rsv.Room;
 import com.gh.service.impl.GahaServiceImpl;
@@ -52,25 +53,25 @@ public class GehaServiceTest {
 		service.setRoomMap(roomMap);
 		
 		try {
-			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, 0, true);
+			Reservation r1 = service.makeRsv(new Date(2025,5,8), 'F', 1, g1, new Party(0,30000), true);
 			System.out.println(g1.getName()+"님의 예약입니다 => "+r1);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, 0, true);
+			Reservation r2 = service.makeRsv(new Date(2025,5,8), 'F', 1, g2, new Party(0,0), true);
 			System.out.println(g2.getName()+"님의 예약입니다 => "+r2);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, 0, true);
+			Reservation r3 = service.makeRsv(new Date(2025,5,8), 'F', 1, g3, new Party(0,0), true);
 			System.out.println(g3.getName()+"님의 예약입니다 => "+r3);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
 		}
 		try {
-			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, 0, true);
+			Reservation r4 = service.makeRsv(new Date(2025,5,8), 'F', 1, g4, new Party(0,0), true);
 			System.out.println(g4.getName()+"님의 예약입니다 => "+r4);
 		} catch (NoRoomException e) {
 			System.out.println(e.getMessage());
@@ -94,21 +95,41 @@ public class GehaServiceTest {
 		}
 //		for(Room r : roomMap.values())
 //			System.out.println(r);		
-		
+		System.out.println();
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
 	
+		System.out.println();
 		System.out.println("===== 파티 구성 테스트 =====");
 		service.makeParty(new Date(2025, 5, 8));
 		
+		// 파티 구성 결과 확인
+		ArrayList<Reservation> rsvAfterParty = service.searchAllRsv(new Date(2025,5,8));
+		for (Reservation r : rsvAfterParty) {
+		    System.out.println("예약번호: " + r.getRsvNum() +
+		                       ", 이름: " + r.getRsvGuest().getName() +
+		                       ", 파티번호: " + (r.getParty().getAttendFee() != 0 ? r.getParty().getPartyNum() : "없음"));
+		}
+		System.out.println("===== 예약번호 1번의 파티 정보 =====");
+		Party p = service.searchParty(1);
+		System.out.println("partyNum: " + p.getPartyNum() + ", attendFee: " + p.getAttendFee());
+
+
+		System.out.println("===== 2025-05-08 날짜의 파티 목록 =====");
+		Party[] partyList = service.searchParty(new Date(2025,5,8));
+		for (Party party : partyList) {
+		    System.out.println(party);
+		}
+
+		
 		try {
 		    Room changedRoom = roomMap.get("F21"); // 2인실 방 하나 선택
-		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, 0, false); // 예약번호 1번 수정
+		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, new Party(0,0), false); // 예약번호 1번 수정
 		    service.updateRsv(1, newRsv); // 번호 1번 예약자 g1의 방을 변경
-
+			System.out.println();
 		    System.out.println("업데이트 후 예약 정보:");
 		    System.out.println(newRsv);
-
+			System.out.println();
 		    System.out.println("업데이트 후 방 상태:");
 		    System.out.println("기존방(F11): " + roomMap.get("F11"));
 		    System.out.println("신규방(F21): " + roomMap.get("F21"));
@@ -116,7 +137,7 @@ public class GehaServiceTest {
 			
 		    e.printStackTrace();
 		}
-		
+		System.out.println();
 		System.out.println("=====Date(2025,5,8) 에 조식 신청한 Guest 목록=====");
 		ArrayList<Guest> bf250508 = new ArrayList<>();
 		try {
@@ -126,7 +147,7 @@ public class GehaServiceTest {
 		} catch (NoBreakfastException e) {
 			System.out.println(e.getMessage());
 		}
-		
+		System.out.println();
 		System.out.println("=====Date(2025,5,9) 에 조식 신청한 Guest 목록=====");
 		ArrayList<Guest> bf250509 = new ArrayList<>();
 		try {
@@ -136,19 +157,19 @@ public class GehaServiceTest {
 		} catch (NoBreakfastException e) {
 			System.out.println(e.getMessage());
 		}
-		
+		System.out.println();
 		System.out.println("=====조식을 준비합니다.=====");
 		try {
 			System.out.println("인당 가격은 "+service.makeBreakfast(new Date(2025,5,8))+"입니다.");
 		} catch (NoBreakfastException e) {
 			System.out.println(e.getMessage());
 		}
-		
+		System.out.println();
 		System.out.println("=====Date(2025,5,8)의 모든 예약 목록=====");
 		ArrayList<Reservation> allRsv = service.searchAllRsv(new Date(2025,5,8));
 		for(Reservation r : allRsv)
 			System.out.println(r);
-		
+		System.out.println();
 		System.out.println("=====Date(2025,5,8)의 방 예약 현황=====");
 		System.out.println(service.searchRsvCondition(new Date(2025,5,8)));
 		System.out.println("=====예약 번호 1로 조회한 예약 정보=====");

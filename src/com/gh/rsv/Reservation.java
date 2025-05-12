@@ -15,20 +15,30 @@ public class Reservation {
 	private Date rsvDate;
 	private Guest rsvGuest;
 	private Room rsvRoom;
-	private int attendFee;
+	private Party party;
 	private boolean eatBreakfast;
 
 	public Reservation() {
 	}
 
-	public Reservation(int rsvNum, Date rsvDate, Guest rsvGuest, Room rsvRoom, int attendFee, boolean eatBreakfast) {
+
+	public Reservation(int rsvNum, Date rsvDate, Guest rsvGuest, Room rsvRoom, Party party,
+			boolean eatBreakfast) {
 		super();
 		this.rsvNum = rsvNum;
 		this.rsvDate = rsvDate;
 		this.rsvGuest = rsvGuest;
 		this.rsvRoom = rsvRoom;
-		this.attendFee = attendFee;
+		this.party = party;
 		this.eatBreakfast = eatBreakfast;
+	}
+
+	public Party getParty() {
+		return party;
+	}
+
+	public void setParty(Party party) {
+		party = party;
 	}
 
 	public int getRsvNum() {
@@ -63,13 +73,6 @@ public class Reservation {
 		this.rsvRoom = rsvRoom;
 	}
 
-	public int getAttendFee() {
-		return attendFee;
-	}
-
-	public void setAttendFee(int attendFee) {
-		this.attendFee = attendFee;
-	}
 
 	public boolean isEatBreakfast() {
 		return eatBreakfast;
@@ -82,6 +85,6 @@ public class Reservation {
 	@Override
 	public String toString() {
 		return "Reservation [rsvNum=" + rsvNum + ", rsvDate=" + rsvDate + ", rsvGuest=" + rsvGuest + ", rsvRoom="
-				+ rsvRoom + ", attendFee=" + attendFee + ", eatBreakfast=" + eatBreakfast + "]";
+				+ rsvRoom + ", party=" + party + ", eatBreakfast=" + eatBreakfast + "]";
 	}
 }
