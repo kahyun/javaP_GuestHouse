@@ -80,8 +80,7 @@ public  class GahaServiceImpl implements GehaService {
 		if(tempRsv == null)
 			throw new NoRoomException("예약 가능한 방이 없습니다.");
 		// attendFee 랑 eatBreakfast 인자값 받은 거 Party Map과 Breakfast Map에 넣기
-		partyMap.put(rsvNum, party.getAttendFee());
-		if(breakfast.getEatBreakfast() == true)
+		
 		 if (party != null) {
 		        partyMap.put(rsvNum, party.getAttendFee());
 		    }
