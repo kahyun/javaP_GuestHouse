@@ -58,7 +58,7 @@ public  class GahaServiceImpl implements GehaService {
 	}
 
 	@Override
-	public TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) { // 예약 가능 여부 확인
+	public TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException { // 예약 가능 여부 확인
 		TreeSet<Room> temp = new TreeSet<>();
 		if(gender == 'F') { // 여자 방 조회
 			for(String k : roomMap.keySet()) {
@@ -73,6 +73,8 @@ public  class GahaServiceImpl implements GehaService {
 				}
 			}
 		}
+		if(temp.size()==0)
+			throw new NoRoomException();
 		return temp;
 	}
 	
