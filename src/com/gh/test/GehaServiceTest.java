@@ -101,23 +101,19 @@ public class GehaServiceTest {
 		System.out.println("=====예약 가능한 F 방 목록=====");
 		System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
 	
-		System.out.println("================ 파티 구성 테스트 =================");
 		System.out.println();
 		System.out.println("===== 파티 구성 테스트 =====");
-		service.makeParty(new Date(2025, 5, 8));
 		
-		// 파티 구성 결과 확인
-		ArrayList<Reservation> rsvAfterParty = service.searchAllRsv(new Date(2025,5,8));
-		for (Reservation r : rsvAfterParty) {
-		    System.out.println("예약번호: " + r.getRsvNum() +
-		                       ", 이름: " + r.getRsvGuest().getName() +
-		                       ", 파티번호: " + (r.getParty().getAttendFee() != 0 ? r.getParty().getPartyNum() : "없음"));
-		}
 		System.out.println();
 		System.out.println("===== 예약번호 1번의 파티 정보 =====");
+		service.getPartyMap().put(1, 30000);
+		service.makeParty(new Date(2025, 5, 8));
 		Party p = service.searchParty(1);
-		System.out.println("partyNum: " + p.getPartyNum() + ", attendFee: " + p.getAttendFee());
-
+		if (p != null) {
+		    System.out.println("partyNum: " + p.getPartyNum() + ", attendFee: " + p.getAttendFee());
+		} else {
+		    System.out.println("파티가 생성되지 않았습니다.");
+		}
 		System.out.println();
 		System.out.println("===== 2025-05-08 날짜의 파티 목록 =====");
 		Party[] partyList = service.searchParty(new Date(2025,5,8));
@@ -125,12 +121,24 @@ public class GehaServiceTest {
 		    System.out.println(party);
 		}
 
+		// 파티 구성 결과 확인
+		ArrayList<Reservation> rsvAfterParty = service.searchAllRsv(new Date(2025,5,8));
+		for (Reservation r : rsvAfterParty) {
+		    System.out.print("예약번호: " + r.getRsvNum()
+		                       + ", 이름: " + r.getRsvGuest().getName());
+		    if (r.getParty() != null) {
+		        System.out.println(", 파티번호: " + r.getParty().getPartyNum());
+		    } else {
+		        System.out.println(", 파티번호: 없음");
+		    }
+		}
 		
 		try {
 		    Room changedRoom = roomMap.get("F21"); // 2인실 방 하나 선택
 		    Reservation newRsv = new Reservation(1, new Date(2025, 5, 8), g1, changedRoom, null, new Breakfast(false)); // 예약번호 1번 수정
 		    service.updateRsv(1, newRsv); // 번호 1번 예약자 g1의 방을 변경
 
+		    System.out.println();
 		    System.out.println("==============업데이트 후 방 상태===============");
 			System.out.println();
 		    System.out.println("업데이트 후 예약 정보:");
