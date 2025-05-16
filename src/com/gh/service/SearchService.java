@@ -35,7 +35,7 @@ public interface SearchService {
 	 * @param rsvDate
 	 * @return 특정 일자의 Reservation 배열
 	 */
-	ArrayList<Reservation> searchAllRsv(Date rsvDate);
+	List<Reservation> searchAllRsv(Date rsvDate);
 	
 	/**
 	 * 특정 일자를 기준으로 방 별 예약 현황을 조회하는 기능
@@ -64,7 +64,7 @@ public interface SearchService {
 	 * @return 특정 일자의 조식 신청 Guest 배열
 	 * @throws NoBreakfastException
 	 */
-	ArrayList<Guest> searchBreakfastGuest(Date resvDate) throws NoBreakfastException;
+	List<Guest> searchBreakfastGuest(Date resvDate) throws NoBreakfastException;
 	
 	/**
 	 * 특정 일자를 기준으로 조식을 신청한 인원 수를 조회하는 기능
