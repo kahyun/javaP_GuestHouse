@@ -1,6 +1,7 @@
 package com.gh.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
@@ -20,7 +21,7 @@ public interface SearchService {
 	 * @return 예약 가능한 방 목록을 TreeSet 타입으로 오름차순 반환
 	 * @throws NoRoomException 
 	 */
-	TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException;
+	List<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException;
 	
 	/**
 	 * Guest 가 예약 번호를 조회하여 예약 정보를 조회하는 기능
