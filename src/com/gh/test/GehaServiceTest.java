@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.gh.child.Guest;
@@ -470,7 +472,6 @@ public class GehaServiceTest {
 					case 8: // 8. 내 파티 조회하기
 						System.out.println("파티 정보를 조회할 예약 번호를 입력하세요 => ");
 						int rsvNum9 = sc.nextInt();
-						service.getPartyMap().put(rsvNum9, 30000);
 						service.makeParty(new Date(2025, 5, 8));
 						Party p = service.searchParty(rsvNum9);
 						if (p != null) {
@@ -490,18 +491,19 @@ public class GehaServiceTest {
 						int day9 = sc.nextInt();
 						System.out.println(year9+"/"+month9+"/"+day9+"의 파티 목록입니다.");
 						service.makeParty(new Date(year9, month9, day9));
-						try {
-						    Party[] parties = service.searchParty(new Date(year9, month9, day9));
-						    if (parties.length == 0) {
-						        System.out.println("해당일에 등록된 파티가 없습니다.");
-						    } else {
-						        for (Party p9 : parties) {
-						            System.out.println(p9);
-						        }
-						    }
-						} catch (Exception e) {
-						    System.out.println("파티 정보를 가져오는 중 오류: " + e.getMessage());
-						}
+						List<Party> parties = new ArrayList<Party>();
+								parties = service.searchParty(new Date(year9, month9, day9));
+					    Optional<Party> optional9 = parties.stream()
+					    									.filter(Objects::nonNull)
+					    									.findFirst();
+						if (optional9.isPresent()) {
+					        parties.stream()
+					        .filter(Objects::nonNull)
+					        .sorted((o1,o2)->o1.getPartyNum()-o2.getPartyNum())
+					        .forEach(System.out::println);
+					    } else {
+					            System.out.println(year9+"/"+month9+"/"+day9+"에는 파티가 없습니다.");
+					    }
 						break;
 //						// 파티 구성 결과 확인
 //						ArrayList<Reservation> rsvAfterParty = service.searchAllRsv(new Date(2025,5,8));

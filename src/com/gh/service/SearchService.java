@@ -1,6 +1,7 @@
 package com.gh.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
@@ -55,7 +56,7 @@ public interface SearchService {
 	 * @param rsvDate
 	 * @return 특정 일자의 Party 배열
 	 */
-	Party[] searchParty(Date rsvDate);
+	List<Party> searchParty(Date rsvDate);
 	
 	/**
 	 * 특정 일자를 기준으로 조식을 신청한 게스트 목록을 조회하는 기능

@@ -1,7 +1,9 @@
 package com.gh.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
@@ -193,18 +195,15 @@ public  class GahaServiceImpl implements GehaService {
 	}
 
 	@Override
-	public Party[] searchParty(Date rsvDate) {
+	public List<Party> searchParty(Date rsvDate) {
 	    ArrayList<Party> parties = new ArrayList<>();
-	    for (Reservation r : rsvMap.values()) {
-	        if (r.getRsvDate().getYear() == rsvDate.getYear()
-	                && r.getRsvDate().getMonth() == rsvDate.getMonth()
-	                && r.getRsvDate().getDay() == rsvDate.getDay()) {
-	            if (r.getParty() != null) { // 파티가 배정된 경우만
-	                parties.add(r.getParty());
-	            }
-	        }
-	    }
-	    return parties.toArray(new Party[0]);
+	    return rsvMap.values().stream()
+				.filter(r->
+				r.getRsvDate().getYear() == rsvDate.getYear()
+                && r.getRsvDate().getMonth() == rsvDate.getMonth()
+                && r.getRsvDate().getDay() == rsvDate.getDay())
+			.map(r->r.getParty())
+			.toList();
 	}
 	
 	@Override
