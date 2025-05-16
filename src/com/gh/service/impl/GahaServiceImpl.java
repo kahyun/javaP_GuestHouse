@@ -2,7 +2,9 @@ package com.gh.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.gh.child.Guest;
 import com.gh.exception.NoBreakfastException;
@@ -58,33 +60,21 @@ public  class GahaServiceImpl implements GehaService {
 	}
 
 	@Override
-	public TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException { // 예약 가능 여부 확인
-		TreeSet<Room> temp = new TreeSet<>();
-		if(gender == 'F') { // 여자 방 조회
-			for(String k : roomMap.keySet()) {
-				if(k.substring(0, 1).equals("F") && Integer.parseInt(k.substring(1, 2)) > roomMap.get(k).getBooked()) {
-					temp.add(roomMap.get(k));
-				}
-			}
-		} else { // 남자 방 조회
-			for(String k : roomMap.keySet()) {
-				if(k.substring(0, 1).equals("M") && Integer.parseInt(k.substring(1, 2)) > roomMap.get(k).getBooked()) {
-					temp.add(roomMap.get(k));
-				}
-			}
-		}
-		if(temp.size()==0)
-			throw new NoRoomException();
-		return temp;
+	public List<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException { // 예약 가능 여부 확인
+		return roomMap.keySet().stream()
+			    .filter(r ->  r.substring(0, 1).equals(String.valueOf(gender)) 
+			    		&& Integer.parseInt(r.substring(1,2)) > roomMap.get(r).getBooked()) 
+			    .sorted((o1, o2) -> o1.compareTo(o2))
+			    .map(r -> roomMap.get(r))
+			    .toList();
 	}
 	
 	@Override
 	public Reservation makeRsv(Date rsvDate, char gender, int roomType,
 						Guest rsvGuest, Party party, Breakfast breakfast) throws NoRoomException { // C
-		TreeSet<Room> tempRoom = new TreeSet<>();
 		Reservation tempRsv = null;
-		tempRoom = searchAvailableRoom(rsvDate, gender);
-		for(Room r : tempRoom) { // gender 조건 만족하는 방 중에서
+		List<Room> roomList = searchAvailableRoom(rsvDate, gender);
+		for(Room r : roomList) { // gender 조건 만족하는 방 중에서
 			if(r.getRoomType() == roomType) { // 방 타입(인원수)가 맞다면
 				r.setBooked(r.getBooked()+1);
 				tempRsv = new Reservation(rsvNum, rsvDate, rsvGuest, r, party, breakfast);
