@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -314,10 +315,9 @@ public class GehaServiceTest {
 				switch (menu) {
 					case 0: // 0. 게스트하우스 전체 방 목록 조회하기
 						System.out.println("=====전체 방 목록=====");
-						List<String> keyList = new ArrayList<>(roomMap.keySet());
-						Collections.sort(keyList);
-						for(String k : keyList)
-							System.out.println(roomMap.get(k));
+						roomMap.values().stream()
+										.sorted((o1, o2) -> o1.getRoomNum().compareTo(o2.getRoomNum()))
+										.forEach(r -> System.out.println(r));
 						break;
 					case 1: // 1. 예약 가능한 방 조회하기
 						// Date(2025,5,8) 조회
@@ -327,16 +327,17 @@ public class GehaServiceTest {
 						int month1 = sc.nextInt();
 						System.out.println("조회할 날짜의 일을 입력하세요 => ");
 						int day1 = sc.nextInt();
+						System.out.println("조회할 성별을 입력하세요 => ");
+						char gender1 = sc.next().charAt(0);
 						System.out.println(year1+"/"+month1+"/"+day1+"의 예약 가능한 방 목록입니다.");
-						System.out.println("=====예약 가능한 여자 방 목록=====");
+						System.out.println("=====예약 가능한 "+gender1+" 방 목록=====");
+						List<Room> rooms = new ArrayList<>();
 						try {
-							System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'F'));
-						} catch (NoRoomException e) {
-							System.out.println(e.getMessage());
-						}
-						System.out.println("=====예약 가능한 남자 방 목록=====");
-						try {
-							System.out.println(service.searchAvailableRoom(new Date(2025,5,8), 'M'));
+							rooms = service.searchAvailableRoom(new Date(year1,month1,day1), gender1);
+							Room r1 = rooms.stream()
+								.findFirst()
+								.orElseThrow(NoRoomException::new);
+							rooms.stream().forEach(r -> System.out.println(r));
 						} catch (NoRoomException e) {
 							System.out.println(e.getMessage());
 						}
@@ -428,7 +429,7 @@ public class GehaServiceTest {
 						int day6 = sc.nextInt();
 						Date queryDate = new Date(year6, month6, day6);
 					    System.out.println(queryDate + "의 모든 예약 목록입니다:");
-						ArrayList<Reservation> allRsv = service.searchAllRsv(queryDate);
+						List<Reservation> allRsv = service.searchAllRsv(queryDate);
 						
 						try (BufferedWriter writer = new BufferedWriter(new FileWriter("reservation_output.txt"))) {
 					        if (allRsv == null || allRsv.isEmpty()) {
@@ -436,11 +437,9 @@ public class GehaServiceTest {
 					            writer.write("예약이 없습니다.");
 					            writer.newLine();
 					        } else {
-					            for (Reservation r : allRsv) {
-					                System.out.println(r.toString());    // 콘솔 출력
-					                writer.write(r.toString());          // 파일 저장
-					                writer.newLine();            // 줄바꿈
-					            }
+					           allRsv.stream().forEach(r -> {
+					        	   System.out.println(r);
+					           });
 					        }
 					        System.out.println("파일 저장 완료: reservation_output.txt");
 					    } catch (IOException e) {
@@ -456,18 +455,9 @@ public class GehaServiceTest {
 						System.out.println("조회할 날짜의 일을 입력하세요 => ");
 						int day7 = sc.nextInt();
 						System.out.println(year7+"/"+month7+"/"+day7+"에 예약된 방 현황입니다.");
-						String[] rsvCon = service.searchRsvCondition(new Date(year7,month7,day7)).split("-");
-						ArrayList<String> rsvConList = new ArrayList<>();
-						for(int i=0; i<rsvCon.length; i++)
-							rsvConList.add(rsvCon[i]);
-						Collections.sort(rsvConList, new Comparator<String>() {
-							@Override
-							public int compare(String o1, String o2) {
-								return o1.compareTo(o2);
-							}
-						});
-						for(String s : rsvConList)
-							System.out.println(s);
+						Arrays.stream(service.searchRsvCondition(new Date(year7,month7,day7)).split("-")) 
+						 .sorted((o1, o2) -> o1.compareTo(o2))
+						 .forEach(System.out::println);
 						break;
 					case 8: // 8. 내 파티 조회하기
 						System.out.println("파티 정보를 조회할 예약 번호를 입력하세요 => ");
@@ -525,12 +515,15 @@ public class GehaServiceTest {
 						int month10 = sc.nextInt();
 						System.out.println("조회할 날짜의 일을 입력하세요 => ");
 						int day10 = sc.nextInt();
-						ArrayList<Guest> bfday = new ArrayList<>();
+						List<Guest> bfday = new ArrayList<>();
 						try {
 							bfday = service.searchBreakfastGuest(new Date(year10,month10,day10));
-							System.out.println(year10+"/"+month10+"/"+day10+"에 조식을 신청한 인원 수는 "+bfday.size()+"명입니다.\n조식 신청 게스트 목록은 아래와 같습니다.");
-							for(Guest g : bfday)
-								System.out.println(g);
+							System.out.println(year10+"/"+month10+"/"+day10+"에 조식을 신청한 인원 수는 "+bfday.size()+"명입니다.");
+							bfday.stream()
+								.findFirst()
+								.orElseThrow(NoBreakfastException::new);
+							System.out.println("조식 신청 게스트 목록은 아래와 같습니다.");
+							bfday.forEach(b -> System.out.println(b));
 						} catch (NoBreakfastException e) {
 							System.out.println(e.getMessage());
 						}
