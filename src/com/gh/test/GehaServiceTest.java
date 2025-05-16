@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.gh.child.Guest;
@@ -312,10 +313,9 @@ public class GehaServiceTest {
 				switch (menu) {
 					case 0: // 0. 게스트하우스 전체 방 목록 조회하기
 						System.out.println("=====전체 방 목록=====");
-						List<String> keyList = new ArrayList<>(roomMap.keySet());
-						Collections.sort(keyList);
-						for(String k : keyList)
-							System.out.println(roomMap.get(k));
+						roomMap.values().stream()
+										.sorted((o1, o2) -> o1.getRoomNum().compareTo(o2.getRoomNum()))
+										.forEach(r -> System.out.println(r));
 						break;
 					case 1: // 1. 예약 가능한 방 조회하기
 						// Date(2025,5,8) 조회
@@ -426,21 +426,28 @@ public class GehaServiceTest {
 						int day6 = sc.nextInt();
 						Date queryDate = new Date(year6, month6, day6);
 					    System.out.println(queryDate + "의 모든 예약 목록입니다:");
-						ArrayList<Reservation> allRsv = service.searchAllRsv(queryDate);
+						List<Reservation> allRsv = service.searchAllRsv(queryDate);
 						
 						try (BufferedWriter writer = new BufferedWriter(new FileWriter("reservation_output.txt"))) {
-					        if (allRsv == null || allRsv.isEmpty()) {
-					            System.out.println("예약이 없습니다.");
-					            writer.write("예약이 없습니다.");
+							try {
+								Reservation temp6 = allRsv.stream()
+														.findFirst()
+														.orElseThrow(()-> new NoReservationException("예약이 없습니다."));
+								allRsv.forEach(r -> {
+									System.out.println(r);
+									try {
+										writer.write(r.toString()); // 파일 저장
+						                writer.newLine();            // 줄바꿈
+									} catch (IOException e) {
+										System.out.println(e.getMessage());
+									} 
+								});
+								          
+							} catch (NoReservationException e) {
+								System.out.println(e.getMessage());
+								writer.write("예약이 없습니다.");
 					            writer.newLine();
-					        } else {
-					            for (Reservation r : allRsv) {
-					                System.out.println(r.toString());    // 콘솔 출력
-					                writer.write(r.toString());          // 파일 저장
-					                writer.newLine();            // 줄바꿈
-					            }
-					        }
-					        System.out.println("파일 저장 완료: reservation_output.txt");
+							}
 					    } catch (IOException e) {
 					        System.out.println("파일 저장 중 오류 발생: " + e.getMessage());
 					    }
@@ -523,12 +530,15 @@ public class GehaServiceTest {
 						int month10 = sc.nextInt();
 						System.out.println("조회할 날짜의 일을 입력하세요 => ");
 						int day10 = sc.nextInt();
-						ArrayList<Guest> bfday = new ArrayList<>();
+						List<Guest> bfday = new ArrayList<>();
 						try {
 							bfday = service.searchBreakfastGuest(new Date(year10,month10,day10));
-							System.out.println(year10+"/"+month10+"/"+day10+"에 조식을 신청한 인원 수는 "+bfday.size()+"명입니다.\n조식 신청 게스트 목록은 아래와 같습니다.");
-							for(Guest g : bfday)
-								System.out.println(g);
+							System.out.println(year10+"/"+month10+"/"+day10+"에 조식을 신청한 인원 수는 "+bfday.size()+"명입니다.");
+							bfday.stream()
+								.findFirst()
+								.orElseThrow(NoBreakfastException::new);
+							System.out.println("조식 신청 게스트 목록은 아래와 같습니다.");
+							bfday.forEach(b -> System.out.println(b));
 						} catch (NoBreakfastException e) {
 							System.out.println(e.getMessage());
 						}

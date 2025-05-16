@@ -2,6 +2,7 @@ package com.gh.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.gh.child.Guest;
@@ -60,17 +61,9 @@ public  class GahaServiceImpl implements GehaService {
 	@Override
 	public TreeSet<Room> searchAvailableRoom(Date rsvDate, char gender) throws NoRoomException { // 예약 가능 여부 확인
 		TreeSet<Room> temp = new TreeSet<>();
-		if(gender == 'F') { // 여자 방 조회
-			for(String k : roomMap.keySet()) {
-				if(k.substring(0, 1).equals("F") && Integer.parseInt(k.substring(1, 2)) > roomMap.get(k).getBooked()) {
-					temp.add(roomMap.get(k));
-				}
-			}
-		} else { // 남자 방 조회
-			for(String k : roomMap.keySet()) {
-				if(k.substring(0, 1).equals("M") && Integer.parseInt(k.substring(1, 2)) > roomMap.get(k).getBooked()) {
-					temp.add(roomMap.get(k));
-				}
+		for(String k : roomMap.keySet()) {
+			if(k.substring(0, 1).equals(String.valueOf(gender)) && Integer.parseInt(k.substring(1, 2)) > roomMap.get(k).getBooked()) {
+				temp.add(roomMap.get(k));
 			}
 		}
 		if(temp.size()==0)
@@ -162,12 +155,10 @@ public  class GahaServiceImpl implements GehaService {
 	}
 	
 	@Override
-	public ArrayList<Reservation> searchAllRsv(Date rsvDate) { // 전체 R
-		ArrayList<Reservation> temp = new ArrayList<>();
-		for(Reservation r : rsvMap.values()) {
-			temp.add(r);
-		}
-		return temp;
+	public List<Reservation> searchAllRsv(Date rsvDate) { // 전체 R : ArrayList<Reservation> -> List<Reservation>
+		return rsvMap.values().stream()
+								.sorted((o1, o2) -> o1.getRsvNum() - o2.getRsvNum())
+								.toList();
 	}
 	
 	@Override
@@ -297,18 +288,12 @@ public  class GahaServiceImpl implements GehaService {
 	}
 
 	@Override
-	public ArrayList<Guest> searchBreakfastGuest(Date rsvDate) throws NoBreakfastException { // Guest[] -> ArrayList<Guest> 로 수정
-		ArrayList<Guest> mealList = new ArrayList<>();
-		for(int i : breakfastMap.keySet()) { // 조식 목록을 돌면서
-			Date tempDate = breakfastMap.get(i); // 조식 목록의 날짜를 임시로 담을 Date 변수
-			// 연도 월 일이 같다면
-			if(tempDate.getYear() == rsvDate.getYear() && tempDate.getMonth() == rsvDate.getMonth() && tempDate.getDay() == rsvDate.getDay()) {
-				mealList.add(rsvMap.get(i).getRsvGuest()); // 게스트 목록에 추가
-			}
-		}
-		if(mealList.size() == 0)
-			throw new NoBreakfastException("해당일에 조식을 신청한 인원이 없습니다.");
-		return mealList;
+	public List<Guest> searchBreakfastGuest(Date rsvDate) throws NoBreakfastException { // ArrayList<Guest> -> List<Guest>
+		return breakfastMap.keySet().stream()
+								.filter(b -> breakfastMap.get(b).getYear()==rsvDate.getYear() && breakfastMap.get(b).getMonth()==rsvDate.getMonth() && breakfastMap.get(b).getDay()==rsvDate.getDay())
+								.sorted((o1, o2) -> o1-o2)
+								.map(b -> rsvMap.get(b).getRsvGuest())
+								.toList();
 	}
 	
 	// case 10~12를 위한 메소드
